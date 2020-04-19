@@ -17,11 +17,13 @@ public class CupScript : MonoBehaviour
 				{
 					FindObjectOfType<Controller>().PickedUpCup = true;
 					FindObjectOfType<Controller>().target = null;
+					FindObjectOfType<Controller>().UwU.Play();
 				}
 				else
 				{
 					FindObjectOfType<Controller>().PickedUpKnife = true;
 					FindObjectOfType<Controller>().target = null;
+					FindObjectOfType<Controller>().UwU.Play();
 				}
 			}
 		}

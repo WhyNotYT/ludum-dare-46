@@ -18,15 +18,24 @@ public class MobileGameController : MonoBehaviour
 	public int scoreUpdatePerCar;
 	public int Score;
 	public TMP_Text scoreText;
-
-
+	public Sprite[] carVariants;
+	public Image spotLight;
 	private int a1, a2;
+	public float difficultyMultiplier;
 	private void Start()
 	{
 		carSpeed1 = Random.Range(CarSpeedMin, CarSpeedMax);
 		carSpeed2 = Random.Range(CarSpeedMin, CarSpeedMax);
-		Score = -20;
 	}
+
+
+	private void increaseDifficulty()
+	{
+		CarSpeedMax *= difficultyMultiplier;
+		CarSpeedMin *= difficultyMultiplier;
+		FindObjectOfType<Controller>().moveSpeed *= difficultyMultiplier;
+	}
+
 
 	private void Update()
 	{
@@ -49,7 +58,7 @@ public class MobileGameController : MonoBehaviour
 			a1 = Random.Range(0, 3);
 			carSpeed1 = Random.Range(CarSpeedMin, CarSpeedMax);
 
-			CivilianCar1.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1);
+			CivilianCar1.sprite = carVariants[Random.Range(0, carVariants.Length)];
 
 			Score += scoreUpdatePerCar;
 
@@ -76,16 +85,17 @@ public class MobileGameController : MonoBehaviour
 
 			a2 = Random.Range(0, 3);
 
-			while (a1 == a2)
+			if(a1 == a2)
 			{
+				Debug.Log("Same Pos");
 				a2 = Random.Range(0, 3);
 			}
 			carSpeed2 = Random.Range(CarSpeedMin, CarSpeedMax);
 
 			Score += scoreUpdatePerCar;
+			increaseDifficulty();
 
-
-			CivilianCar2.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1);
+			CivilianCar2.sprite = carVariants[Random.Range(0, carVariants.Length)];
 
 			if (a2 == 0)
 			{

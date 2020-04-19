@@ -10,7 +10,7 @@ public class EnemyCar : MonoBehaviour
 		Debug.Log(collision.collider.name);
 		if (collision.collider.name == "Player")
 		{
-			Debug.Log("GameOver");
+			FindObjectOfType<GameOverManager>().GameOver(this.transform.position);
 
 
 		}

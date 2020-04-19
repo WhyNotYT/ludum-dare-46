@@ -94,4 +94,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5e157caaee722548adf15ebbf5c10c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MessToAdd: 0.2
+  MessToAdd: 0.4

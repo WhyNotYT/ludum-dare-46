@@ -43,8 +43,15 @@ public class Controller : MonoBehaviour
 	public bool PickedUpCup;
 	public GameObject KnifeInHand;
 	public GameObject CupInHand;
+	public MusicManager musicManager;
 
-
+	public float CarryCryCounter;
+	public AudioSource FlushSound;
+	public AudioSource poopSound;
+	public AudioSource fallingSound;
+	public AudioSource cryingSound;
+	public AudioSource UwU;
+	public AudioSource PoopComeSound;
 	public void buttonClick()
 	{
 
@@ -71,6 +78,7 @@ public class Controller : MonoBehaviour
 						CupInHand.SetActive(false);
 					}
 					carrying = true;
+					CarryCryCounter = Time.time + 3;
 					cooldownCounter = Time.time + 0.2f;
 				}
 			}
@@ -94,6 +102,7 @@ public class Controller : MonoBehaviour
 
 		Instantiate(PoopPrefab, baby.transform.position + new Vector3(0, -0.5f, 6), Quaternion.identity);
 		PoopCounter = Time.time + Random.Range(10, 30);
+		poopSound.Play();
 
 	}
 
@@ -101,6 +110,24 @@ public class Controller : MonoBehaviour
 
 	private void Update()
 	{
+
+		if(anim.GetCurrentAnimatorStateInfo(0).IsName("Cry"))
+		{
+			musicManager.Extra = true;
+		}
+		else if(wannaPoop.activeInHierarchy)
+		{
+			musicManager.Extra = true;
+		}
+		else if(PickedUpKnife || PickedUpCup)
+		{
+			musicManager.Extra = true;
+		}
+		else
+		{
+			musicManager.Extra = false;
+		}
+
 		messBar.fillAmount = Mathf.Clamp01(MessAmount);
 
 		if(PickedUpCup)
@@ -122,25 +149,35 @@ public class Controller : MonoBehaviour
 		{
 			NoiseAmount += NoiseIncreaseRate * Time.deltaTime;
 			noiseBar.fillAmount = Mathf.Clamp01(NoiseAmount);
+			if(!cryingSound.isPlaying)
+			{
+				cryingSound.Play();
+			}
 		}
 		else
 		{
 			NoiseAmount = Mathf.Clamp01(NoiseAmount - NoiseIncreaseRate * Time.deltaTime * 0.1f);
 			noiseBar.fillAmount = Mathf.Clamp01(NoiseAmount);
+			cryingSound.Stop();
 
 		}
 		if (NoiseAmount > 1 || MessAmount > 1)
 		{
-			Debug.Log("GameOver");
+			FindObjectOfType<GameOverManager>().GameOver(baby.transform.position);
 		}
 		//Debug.Log(Time.time);
 		if(PoopCounter < Time.time + 3)
 		{
 			wannaPoop.SetActive(true);
 			PoopComming = true;
-
+			if (!PoopComeSound.isPlaying)
+			{
+				PoopComeSound.Play();
+			}
 			if (PoopComming)
 			{
+
+
 				if (PoopCounter < Time.time)
 				{
 					if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
@@ -148,6 +185,7 @@ public class Controller : MonoBehaviour
 						canMove = false;
 						anim.Play("Poop");
 						PoopComming = false;
+
 					}
 					else
 					{
@@ -247,8 +285,19 @@ public class Controller : MonoBehaviour
 							PoopCounter = Time.time + Random.Range(10, 30);
 							canMove = true;
 							anim.Play("Walk");
+							FlushSound.Play();
 						}
 					}
+				}
+			}
+
+
+			if(CarryCryCounter < Time.time)
+			{
+				if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Cry"))
+				{
+					anim.Play("Cry");
+					crying = true;
 				}
 			}
 		}
@@ -283,6 +332,7 @@ public class Controller : MonoBehaviour
 							KnifeInHand.SetActive(false);
 							PickedUpKnife = false;
 							KnifePlace.position = baby.transform.position + new Vector3(0, -0.5f, 0);
+
 						}
 						else if(PickedUpCup)
 						{
@@ -291,9 +341,10 @@ public class Controller : MonoBehaviour
 							PickedUpCup = false;
 							CupPlace = null;
 							CupPlace.position = new Vector3(-100, 100);
+
 						}
 						anim.Play("FallOver");
-
+						fallingSound.Play();
 						target = null;
 
 						canMove = false;
@@ -330,7 +381,7 @@ public class Controller : MonoBehaviour
 
 					Debug.Log("ReLocating Target");
 					TimeoutCounter = Time.time + 2;
-					RandomFallTimeCounter = Time.time + Random.Range(1f, 5f);
+					RandomFallTimeCounter = Time.time + Random.Range(0.5f, 4f);
 				}
 			}
 		}
